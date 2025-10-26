@@ -1,0 +1,50 @@
+{% extends 'tareas/base.html' %}
+
+{% block title %}Eliminar Tarea - Gestor de Tareas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body">
+                <p>¿Estás seguro de que deseas eliminar la siguiente tarea?</p>
+                <div class="alert alert-warning">
+                    <strong>Título:</strong> {{ tarea.titulo }}<br>
+                    <strong>Descripción:</strong> {{ tarea.descripcion }}
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+                    <a href="{% url 'tareas:lista_tareas' %}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+# Vista para eliminar tarea
+@login_required
+def eliminar_tarea(request, tarea_id):
+    tarea = obtener_tarea_por_id(tarea_id)
+    
+    # Verificar que la tarea existe
+    if not tarea:
+        messages.error(request, 'La tarea que intentas eliminar no existe.')
+        return redirect('tareas:lista_tareas')
+    
+    # Verificar que la tarea pertenece al usuario autenticado
+    if tarea['usuario'] != request.user.username:
+        messages.error(request, 'No tienes permiso para eliminar esta tarea.')
+        return redirect('tareas:lista_tareas')
+    
+    if request.method == 'POST':
+        titulo = tarea['titulo']
+        eliminar_tarea_storage(tarea_id)  # IMPORTANTE: debe usar eliminar_tarea_storage
+        messages.success(request, f'La tarea "{titulo}" ha sido eliminada exitosamente.')
+        return redirect('tareas:lista_tareas')
+    
+    return render(request, 'tareas/eliminar_tarea.html', {'tarea': tarea})

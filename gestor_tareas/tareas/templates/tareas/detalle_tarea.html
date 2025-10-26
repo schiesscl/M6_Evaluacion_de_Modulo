@@ -1,0 +1,47 @@
+{% extends 'tareas/base.html' %}
+
+{% block title %}{{ tarea.titulo }} - Gestor de Tareas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-info-circle"></i> Detalle de Tarea
+                </h4>
+            </div>
+            <div class="card-body">
+                <h3><i class="bi bi-check2-square"></i> {{ tarea.titulo }}</h3>
+                <hr>
+                <div class="mb-3">
+                    <strong><i class="bi bi-file-text"></i> Descripción:</strong>
+                    <p class="mt-2">{{ tarea.descripcion }}</p>
+                </div>
+                <div class="mb-3">
+                    <strong><i class="bi bi-circle"></i> Estado:</strong>
+                    <span class="badge bg-secondary">
+                        {% if tarea.completada %}Completada{% else %}Pendiente{% endif %}
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <strong><i class="bi bi-person"></i> Usuario:</strong> {{ tarea.usuario }}
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex gap-2">
+                    <a href="{% url 'tareas:lista_tareas' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <a href="{% url 'tareas:editar_tarea' tarea.id %}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar Tarea
+                    </a>
+                    <a href="{% url 'tareas:eliminar_tarea' tarea.id %}" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar Tarea
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
